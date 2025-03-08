@@ -6,7 +6,9 @@ Created as a project to also learn Rust and low-level systems programming.
 ## Contributing
 
 Contributions outside of general commentary, submitting issues, or holding discussions are 
-strictly limited without prior authorization from the creator(s). This may change in the future.
+strictly limited without prior authorization from the creator(s). 
+
+**Note: These restrictions are likely to be relaxed or annulled in the future as the project matures.**
 
 See the [LICENSE](LICENSE) file for details.
 
