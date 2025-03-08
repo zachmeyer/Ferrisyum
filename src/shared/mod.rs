@@ -3,7 +3,7 @@
 //! Re-exports various structs and traits that are used throughout the game engine. Additionally
 //! re-exports some 3rd-party crate structs and types that are also used regularly.
 //!
-//! #### Version: 0.1.0
+//! #### Version: 0.0.1
 //!
 //! #### Author: [Zach Meyer / SmlfrySamuri](https://github.com/zachmeyer)
 

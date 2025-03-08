@@ -9,7 +9,7 @@
 //! respective lifetimes. All methods here must inherit ***lifetime <'gloop>*** (representing one
 //! iteration of the game loop).
 //!
-//! #### Version: 0.1.0
+//! #### Version: 0.0.1
 //!
 //! #### Author: [Zach Meyer / SmlfrySamuri](https://github.com/zachmeyer)
 

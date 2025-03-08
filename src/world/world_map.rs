@@ -1,8 +1,17 @@
-// > USE 3P
+//! # World Map
+//!
+//! A container for the actual map grid, to abstract it away from the 
+//! [WorldController](crate::world::WorldController)
+//!
+//! #### Version: 0.0.1
+//!
+//! #### Author: [Zach Meyer / SmlfrySamuri](https://github.com/zachmeyer)
+
+// > USE
 use grid::*;
 use regex::Regex;
 
-// > USE CRATE/LOCAL
+// > CRATE
 use crate::shared::{
     KeyDoorLink,
     Tile,
@@ -11,11 +20,16 @@ use crate::shared::{
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+/// "Containerizes" the Grid<Tile> of the WorldMap
 pub struct WorldMap {
    pub grid: Grid<Tile>,
 }
 
 impl WorldMap {
+    /// Loads and parses the [WorldMap] from the raw `&[u8]` bytes of a txt file. 
+    ///
+    /// # Arguments
+    /// * `bytes` (`&[u8]`) - The bytes of the txt WorldMap file. 
     pub fn from_bytes(bytes: &[u8]) -> Self {
         let contents = String::from_utf8_lossy(bytes);
         let lines = extract_map_lines(&contents);
@@ -54,6 +68,10 @@ impl WorldMap {
     }
 }
 
+/// Extracts map lines from the `&str` contents of the converted file bytes
+///
+/// # Arguments
+/// * `contents` (`&str`) - The utf8 (lossy) string created from the bytes of a world map txt file. 
 fn extract_map_lines(contents: &str) -> Vec<(usize, &str)> {
     contents
         .lines()
@@ -62,8 +80,11 @@ fn extract_map_lines(contents: &str) -> Vec<(usize, &str)> {
         .collect()
 }
 
-// Parses key-door links using regex
-
+/// Parses [KeyDoorLink](crate::shared::KeyDoorLink) 's from the contents of the converted file
+/// bytes.
+///
+/// # Arguments
+/// * `contents` (`&str`) - The utf8 (lossy) string created from the bytes of a world map txt file.
 fn parse_key_door_links(contents: &str) -> Vec<KeyDoorLink> {
     let re = Regex::new(r"^~K\((\d+),(\d+)\) = D\((\d+),(\d+)\)$").unwrap();
 

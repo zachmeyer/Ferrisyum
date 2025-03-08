@@ -1,6 +1,6 @@
 [package]
 name = "Ferrisyum"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["Zach Meyer <zach.meyer@outlook.com>"]
 license = "WTFPL"
 edition = "2024"

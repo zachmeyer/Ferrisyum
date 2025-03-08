@@ -9,7 +9,7 @@
 //! - Processing world update events
 //! - Managing interactions between player and world elements (doors, keys, treasure, etc.)
 //!
-//! #### Version: 0.1.0
+//! #### Version: 0.0.1
 //!
 //! #### Author: [Zach Meyer / SmlfrySamuri](https://github.com/zachmeyer)
 
