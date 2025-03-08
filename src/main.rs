@@ -1,0 +1,144 @@
+// # GLOBAL LINT FLAGS
+// #
+#![allow(dead_code, unused_variables, unused_imports, unused_braces)]
+#![feature(file_buffered)]
+
+// > USE STD
+use std::collections::BinaryHeap;
+
+// > USE 3P
+use color_eyre::Result as CEResult;
+use ratatui::layout::{Layout, Direction, Constraint};
+use ratatui::widgets::{Block, Borders};
+
+// < MOD
+mod player;
+pub(crate) use player::Player;
+
+mod shared;
+use shared::extlib::{
+    CrosstermEvent, CrosstermKeyCode, crossterm_event,
+    NAVector3, RatatuiDefaultTerminal,
+};
+use shared::MoveDirection;
+
+mod world;
+use world::{WorldController, WorldView, WorldUpdate, WorldUpdateEventType};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+/// ### MAIN ENTRY POINT
+///
+/// * Initializes ratatui and starts the game loop
+fn main() -> CEResult<()> {
+    color_eyre::install()?;
+    let terminal = ratatui::init();
+    let result = init_game_loop(terminal);
+    ratatui::restore();
+    result
+}
+
+/// ### INIT GAME LOOP
+///
+/// * Sets up the terminal, initializes the render context, and handles key input
+fn init_game_loop(mut terminal: RatatuiDefaultTerminal) -> CEResult<()> {
+
+    let mut world_update_queue: BinaryHeap<WorldUpdate<WorldUpdateEventType>> 
+        = BinaryHeap::new();
+
+    let mut player = Player::new('@', NAVector3::new(2, 1, 1));
+    let mut world = WorldController::new(&mut world_update_queue);
+    
+    loop {
+        // TODO: THIS NEEDS TO BE MOVED INTO A UI/INPUT HANDLING MODULE ///////////////////////////
+        terminal.draw(|f| {
+            let show_stats = true;
+            
+            let vertical_chunks = if show_stats {
+                Layout::default()
+                    .direction(Direction::Vertical)
+                    .constraints([
+                        Constraint::Min(10),
+                        Constraint::Length(5),
+                    ])
+                    .split(f.area())
+            } else {
+                // Full screen
+                Layout::default()
+                    .direction(Direction::Vertical)
+                    .constraints([
+                        Constraint::Min(0),
+                    ])
+                    .split(f.area())
+            };
+            
+            let show_inventory = true;
+            
+            let horizontal_chunks = if show_inventory {
+                Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints([
+                        Constraint::Percentage(70),
+                        Constraint::Percentage(30),
+                    ])
+                    .split(vertical_chunks[0])
+            } else {
+                // Full screen
+                Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints([
+                        Constraint::Min(0),
+                    ])
+                    .split(f.area())
+            };
+            
+            // Create the WorldView which will handle rendering the map
+            let world_view = WorldView::new(&world, &player);
+            
+            // Render the WorldView in the game area
+            f.render_widget(world_view, horizontal_chunks[0]);
+            
+            // Render inventory if visible
+            if show_inventory {
+                f.render_widget(
+                    Block::default()
+                        .title("Inventory")
+                        .borders(Borders::ALL), 
+                    horizontal_chunks[1]
+                );
+            }
+            
+            // Render stats if visible
+            if show_stats {
+                f.render_widget(
+                    Block::default()
+                        .title("Stats")
+                        .borders(Borders::ALL), 
+                    vertical_chunks[1]
+                );
+            }
+        })?;
+        ////////////////////////////////////////////////////////////////////////////////////// TODO
+        
+        if let CrosstermEvent::Key(key_event) = crossterm_event::read()? {
+            match key_event.code {
+                CrosstermKeyCode::Char('w') | CrosstermKeyCode::Up => {
+                    world::translate(&mut player, &mut world, MoveDirection::UP);
+                }
+                CrosstermKeyCode::Char('a') | CrosstermKeyCode::Left => {
+                    world::translate(&mut player, &mut world, MoveDirection::LEFT);
+                }
+                CrosstermKeyCode::Char('s') | CrosstermKeyCode::Down => {
+                    world::translate(&mut player, &mut world, MoveDirection::DOWN);
+                }
+                CrosstermKeyCode::Char('d') | CrosstermKeyCode::Right => {
+                    world::translate(&mut player, &mut world, MoveDirection::RIGHT);
+                }
+                CrosstermKeyCode::Char('q') | CrosstermKeyCode::Esc => break Ok(()),
+                _ => (),
+            }
+
+            world.update_world(&mut player);
+        }
+    }
+}

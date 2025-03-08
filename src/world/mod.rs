@@ -1,0 +1,88 @@
+//! # *mod* World
+//!
+//! Re-exports various sub-modules from [crate::world]
+//!
+//! ## Methods
+//! 
+//! Contains inline methods that facilitate the interaction between the WorldController,
+//! the WorldView and objects that must interact with either or both of these outside of their
+//! respective lifetimes. All methods here must inherit ***lifetime <'gloop>*** (representing one
+//! iteration of the game loop).
+//!
+//! #### Version: 0.1.0
+//!
+//! #### Author: [Zach Meyer / SmlfrySamuri](https://github.com/zachmeyer)
+
+// >> CRATE (RE-EXPORT)
+mod world_map;
+pub(crate) use world_map::*;
+
+mod world_update;
+pub(crate) use world_update::*;
+
+mod world_view;
+pub(crate) use world_view::*;
+
+mod world_controller;
+pub(crate) use world_controller::*;
+
+// > CRATE
+use crate::shared::traits::{Moveable};
+use crate::shared::{CommonState, KeyDoorLink, Tile, MoveDirection};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+/// Translates an `impl Moveable` within the [World](WorldController)
+///
+/// # Arguments
+/// * `moveable_mut` ( `&mut impl Moveable` ) - A ***mutable reference*** to any object that 
+///   implements `Moveable` ( and `Positionable` which is ***required*** by Moveable )
+/// * `world`        ( `&mut WorldController` ) - A ***mutable reference*** to the active 
+///   WorldController
+/// * `direction` ( [MoveDirection] ) - The `enum MoveDirection` indicating the direction to move
+/// 
+/// #### Objects must survive for lifetime <'gloop> (one iteration of the game loop)
+pub fn translate<'gloop>(
+    moveable_mut: &'gloop mut impl Moveable,
+    world: &'gloop mut WorldController,
+    direction: MoveDirection,
+) {
+    type Wup = WorldUpdate<WorldUpdateEventType>;
+    type Wut = WorldUpdateEventType;
+
+    moveable_mut.translate(direction);
+    let new_coords = (moveable_mut.new_row(), moveable_mut.new_col());
+
+    match &world.map.grid[new_coords] {
+
+        // MOVING ONTO FLOOR TILE
+        // -> Can contain event, but currently no floor tiles do
+        Tile::Floor(_) => moveable_mut.translate_into(),
+
+        // MOVING ONTO KEY TILE
+        // -> Send a key pickup event to the World Controller
+        Tile::Key(props) => { 
+            moveable_mut.translate_into();
+            if let Some(kdl) = props.kdl {
+                world.queue_update(
+                    Wup::new(Wut::KeyPickup(kdl))
+                );
+            }
+        },
+
+        // MOVING ONTO DOOR TILE
+        // -> Check to see if the player possesses the proper key and allow entry, changing the
+        // tile state
+        Tile::Door(props, state) => {
+            match *state {
+                CommonState::LOCKED => {
+                    world.queue_update(Wup::new(Wut::TryOpenDoor(props.world_coordinates)))
+                },
+                CommonState::UNLOCKED => moveable_mut.translate_into(),
+                _ => {}
+            }
+        }
+        
+        _ => () // WALL OR ANY UNIMPLEMENTED TILE = UNPASSABLE
+    }
+}
