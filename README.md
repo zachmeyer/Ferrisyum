@@ -5,8 +5,7 @@ Created as a project to also learn Rust and low-level systems programming.
 
 ## Contributing
 
-Contributions outside of general commentary, submitting issues, or holding discussions are 
-strictly limited without prior authorization from the creator(s). 
+Contributions outside of submitting issues or discussing the project are strictly limited without prior authorization from the creator(s). 
 
 **Note: These restrictions are likely to be relaxed or annulled in the future as the project matures.**
 
@@ -18,7 +17,7 @@ This project is licensed under a Propreitary License. See the [LICENSE](LICENSE)
 
 ## Contact
 
-For any questions or feedback, please submit an issue or use Github Discussions.
+For any questions or feedback, please submit an issue.
 
 ## 3rd Party Libraries
 
