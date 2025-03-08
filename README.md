@@ -17,3 +17,12 @@ This project is licensed under a Propreitary License. See the [LICENSE](LICENSE)
 ## Contact
 
 For any questions or feedback, please submit an issue or use Github Discussions.
+
+## 3rd Party Libraries
+
+[Ratatui](https://github.com/ratatui/ratatui/) - [MIT License](https://github.com/ratatui/ratatui/blob/main/LICENSE)
+[Grid](https://github.com/becheran/grid) - [MIT License](https://github.com/becheran/grid)
+[color-eyre](https://crates.io/crates/color-eyre/) - [MIT License](https://choosealicense.com/licenses/mit/)
+[crossterm](https://github.com/crossterm-rs/crossterm) - [MIT License](https://github.com/crossterm-rs/crossterm/blob/master/LICENSE)
+[nalgebra](https://github.com/dimforge/nalgebra) - [Apache 2.0 License](https://github.com/dimforge/nalgebra?tab=Apache-2.0-1-ov-file#readme)
+[regex](https://github.com/rust-lang/regex) - [MIT License](https://github.com/rust-lang/regex/blob/master/LICENSE-MIT)
