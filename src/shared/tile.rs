@@ -1,4 +1,4 @@
-// > USE CRATE / LOCAL
+// > USE CRATE
 use crate::shared::treasures::*;
 use crate::shared::traits::{IdentifiableChar, Positionable};
 use crate::shared::{
@@ -9,11 +9,19 @@ use crate::shared::{
     WorldCoordinates
 };
 
+use super::traits::ToIdentifiableChar;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-//
-// ** Tile ENUM
-//
+/// ## Tile
+///
+/// A struct compartmentalizing the various types of `Tile` which can pass a
+/// [TileProperties](crate::shared::TileProperties) and possibly a 
+/// [CommonState](crate::shared::CommonState)
+///
+/// #### Version: 0.0.1
+///
+/// #### Author: [Zach Meyer / SmlfrySamuri](https://github.com/zachmeyer)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Tile {
     Door(TileProperties, CommonState),
@@ -23,13 +31,21 @@ pub enum Tile {
     Wall(TileProperties),
 }
 
+// IMPL Default
 impl Default for Tile {
+
+    /// Returns a default tile (Floor tile)
     fn default() -> Tile {
         Tile::Floor(TileProperties::default())
     }
 }
 
+// IMPL
 impl Tile {
+
+    /// ## Returns 
+    /// 
+    /// A ***mutable*** reference to the `TileProperties`
     pub fn get_properties_mut(&mut self) -> &mut TileProperties {
         match self {
             Tile::Door(props, _) => props,
@@ -40,6 +56,9 @@ impl Tile {
         }
     }
 
+    /// ## Returns 
+    /// 
+    /// An ***immutable*** reference to the `TileProperties`
     pub fn get_properties(&self) -> &TileProperties {
         match self {
             Tile::Door(props, _) => props,
@@ -50,6 +69,10 @@ impl Tile {
         }
     }
 
+    /// Changes the `CommonState` of the `Tile`
+    /// 
+    /// ## Arguments
+    /// * `new_state` ( `CommonState` ) - A [CommonState](crate::shared::CommonState)
     pub fn change_state(&mut self, new_state: CommonState) {
         match self {
             Tile::Door(_, state) => *state = new_state,
@@ -58,6 +81,11 @@ impl Tile {
         }
     }
 
+    /// ## Returns
+    /// 
+    /// * `Some(&CommonState)` - If the `Tile` is a `Door` or `Treasure`, returns a reference 
+    ///   to its `CommonState`.
+    /// * `None` - If the `Tile` is a `Floor`, `Key`, or `Wall`, returns `None`.
     pub fn get_state(&self) -> Option<&CommonState> {
         match self {
             Tile::Door(_, state) => Some(state),
@@ -71,10 +99,13 @@ impl Tile {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 impl Positionable for Tile {
+
+    /// Returns the immutable `row` ( y ) coordinate of the tile
     fn row(&self) -> Row {
         self.get_properties().row
     }
 
+    /// Returns the immutable `col` ( x ) coordinate of the tile
     fn col(&self) -> Column {
         self.get_properties().col
     }
@@ -83,6 +114,20 @@ impl Positionable for Tile {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 impl IdentifiableChar for Tile {
+
+    /// Creates a `Tile` from a given character identifier.
+    ///
+    /// # Arguments
+    ///
+    /// * `id` - A character representing the type of the tile.
+    ///
+    /// # Returns
+    ///
+    /// A `Tile` instance corresponding to the provided character identifier.
+    ///
+    /// # Panics
+    ///
+    /// Panics if an invalid character identifier is supplied.
     fn from_char_id(id: char) -> Self {
         match id {
             '|' => Self::Door(
@@ -130,7 +175,15 @@ impl IdentifiableChar for Tile {
             _ => panic!("Invalid identity char supplied for Tile"),
         }
     }
+}
 
+impl ToIdentifiableChar for Tile {
+
+    /// Returns the character identifier for the `Tile`.
+    ///
+    /// # Returns
+    ///
+    /// A character representing the type of the tile.
     fn to_char_id(&self) -> char {
         self.get_properties().draw_character
     }
@@ -151,11 +204,24 @@ pub struct TileProperties {
 // IMPL TileProperties
 //
 impl TileProperties {
+
+    /// Sets the position of the tile.
+    ///
+    /// ## Arguments
+    ///
+    /// * `coords` - The new world coordinates for the tile.
+    /// 
     pub fn set_position(&mut self, coords: WorldCoordinates) {
         (self.row, self.col) = (coords.0, coords.1);
         self.world_coordinates = coords;
     }
 
+    /// Links a door to a key-door link.
+    ///
+    /// ## Arguments
+    ///
+    /// * `kdl` - The key-door link to be associated with the door
+    /// 
     pub fn link_door(&mut self, kdl: KeyDoorLink) {
         self.kdl = Some(kdl);
     }

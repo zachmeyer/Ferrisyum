@@ -1,3 +1,4 @@
+// > CRATE
 use crate::shared::{
     Column, Row, 
     MoveDirection, 
@@ -5,6 +6,9 @@ use crate::shared::{
     traits::Positionable
 };
 
+/// A trait encapsulating the ability to move throughout the `World`
+/// 
+/// ***Must also impl the `Positionable` trait***
 pub trait Moveable: Positionable {
     fn new_row(&self) -> Row;
     fn new_col(&self) -> Column;

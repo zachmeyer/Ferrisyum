@@ -82,26 +82,20 @@ impl<'wctrl> WorldController<'wctrl> {
 
         impl<'wctrl> Widget for MapWidget<'wctrl> {
             fn render(self, area: Rect, buf: &mut Buffer) {
-                // Accurate dimensions
                 let map_width = self.controller.map.grid.cols();
                 let map_height = self.controller.map.grid.rows();
 
-                // Add borders (+1 for each dimension)
                 let world_width = map_width as u16 + 2;
                 let world_height = map_height as u16 + 2;
 
-                // Create a centered rect for the map content within the provided area
                 let map_area = centered_rect(world_width, world_height, area);
 
-                // Create the block with border that wraps just the map area
                 let block = Block::default()
                     .borders(Borders::ALL)
                     .border_style(Style::default().fg(Color::White));
                 
-                // Render the block around our map content area
                 let inner = block.inner(map_area);
 
-                // Draw map tiles within the inner area
                 for row in 0..map_height {
                     for col in 0..(map_width / TILE_WIDTH as usize) {
                         if  row >= self.controller.map.grid.rows() 
@@ -119,8 +113,6 @@ impl<'wctrl> WorldController<'wctrl> {
 
                         // Make sure we're within bounds
                         if x < inner.x + inner.width && y < inner.y + inner.height {
-                            // If we are at the row,col of the player,
-                            // draw it instead of the tile item
                             if row == self.player.row() && col == self.player.col() {
                                 buf[(x, y)]
                                     .set_symbol(&format!("{:2}", self.player.to_char_id()))
@@ -140,7 +132,6 @@ impl<'wctrl> WorldController<'wctrl> {
 
         // Helper function to create a centered rect
         fn centered_rect(width: u16, height: u16, r: Rect) -> Rect {
-            // Create a rect that's centered within the given area
             let x = r.x + (r.width.saturating_sub(width)) / 2;
             let y = r.y + (r.height.saturating_sub(height)) / 2;
             
@@ -152,6 +143,7 @@ impl<'wctrl> WorldController<'wctrl> {
             )
         }
 
+        // Return the MapWidget
         MapWidget {
             controller: self,
             player,

@@ -1,18 +1,18 @@
 //
-// Identifiable
 //
+/// A trait encapsulating the ability to convert an object to a `usize` id
 pub(crate) trait Identifiable {
     fn to_id(&self) -> usize;
 }
 
-//
-// IdentifiableChar
-//
-pub(crate) trait IdentifiableChar {
-    fn to_char_id(&self) -> char;
+/// A trait encapsulating the ability to convert an object both ***to** and ***from*** a `char` id
+/// 
+/// ***Must also impl the `ToIdentifiableChar` trait***
+pub(crate) trait IdentifiableChar: ToIdentifiableChar {
     fn from_char_id(id: char) -> Self;
 }
 
+/// A trait encapsulating the ability to convert an object both ***to** and ***from*** a `char` id
 pub(crate) trait ToIdentifiableChar {
     fn to_char_id(&self) -> char;
 }

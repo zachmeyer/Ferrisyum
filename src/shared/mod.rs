@@ -26,8 +26,14 @@ pub(crate) mod constants;
 pub(crate) mod traits;
 
 // >> PRIMITIVE TYPE ALIASES
+
+/// The row (y) coordinate within the grid as `usize`
 pub(crate) type Row = usize;
+
+/// The column (x) coordinate within the grid as `usize`
 pub(crate) type Column = usize;
+
+/// A container for the Row, Column ( y,x ) coordinates within the grid as `(usize, usize)`
 pub(crate) type WorldCoordinates = (Row, Column);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +54,17 @@ mod tile;
 pub use tile::{Tile, TileProperties};
 
 pub(crate) mod treasures {
+    //! ## Treasures
+    //! ### sub-module
+    //! 
+    //! Compartmentalizes the [TreasureCollection](crate::shared::TreasureCollection) struct, the
+    //! **TreasureID** `usize` alias, and the **TreasureQuantity** `u64` alias
+
     pub(crate) use super::treasure_collection::*;
+
+    /// The ID of the treasure as `usize`
     pub(crate) type TreasureID = usize;
+
+    /// The Quantity of the treasure as `usize`
     pub(crate) type TreasureQuantity = u64;
 }

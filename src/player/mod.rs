@@ -19,6 +19,7 @@ use crate::shared::{
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+/// Encapsulates a player in the game world.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Player {
     draw: char,
@@ -31,6 +32,12 @@ pub struct Player {
 }
 
 impl Player {
+    /// Creates a new `Player` with the specified character and position.
+    ///
+    /// # Arguments
+    ///
+    /// * `draw` - The `char` used to represent the player visually.
+    /// * `position` - The initial `NAVector3` of the player.
     pub fn new(draw: char, position: NAVector3<i64>) -> Self {
         // Build the player's initial inventory
         let inventory = TreasureCollectionBuilder::new(TreasureCollectionVariant::PlayerInventory)
@@ -38,6 +45,7 @@ impl Player {
                 UniqueItem::from_treasure_type(TreasureType::Gold, 0)
             ]).build();
 
+        // When creating a new player, the current, new-, and previous- position are all the same
         Self {
             new_position: position,
             previous_position: position,
@@ -49,6 +57,7 @@ impl Player {
     }
 }
 
+// IMPL Positionable
 impl Positionable for Player {
     fn row(&self) -> Row {
         self.position.y as Row
@@ -59,6 +68,7 @@ impl Positionable for Player {
     }
 }
 
+// IMPL Moveable
 impl Moveable for Player {
     fn new_col(&self) -> Column {
         self.new_position.x as Column
@@ -79,6 +89,7 @@ impl Moveable for Player {
     }
 }
 
+// IMPL ToIdentifiableChar
 impl ToIdentifiableChar for Player {
     fn to_char_id(&self) -> char {
         self.draw

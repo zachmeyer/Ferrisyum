@@ -1,9 +1,22 @@
+// > SUPER
 use super::extlib::NAMatrix3;
 
+/// The row (y) direction within the grid as `i64`
 type MoveRow = i64;
+
+/// The col (x) direction within the grid as `i64`
 type MoveCol = i64;
+
+/// The speed of movement as an `Option<i64>`
 type MoveSpeed = Option<i64>;
 
+/// ## MoveDirection
+///
+/// A tuple struct indicating the `MoveRow` and `MoveCol` direction, as well as the `MoveSpeed`
+///
+/// #### Version: 0.0.1
+///
+/// #### Author: [Zach Meyer / SmlfrySamuri](https://github.com/zachmeyer)
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct MoveDirection(MoveRow, MoveCol, MoveSpeed);
 
