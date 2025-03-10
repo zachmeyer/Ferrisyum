@@ -9,38 +9,6 @@ use super::{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// ## UniqueItem
-///
-/// A containing the `TreasureID` and `TreasureQuantity` of a Unique (hashable) Item
-///
-/// #### Version: 0.0.1
-///
-/// #### Author: [Zach Meyer / SmlfrySamuri](https://github.com/zachmeyer)
-#[derive(Clone, Debug, Eq, Hash, PartialEq)]
-pub(crate) struct UniqueItem {
-    id: TreasureID,
-    qty: TreasureQuantity,
-}
-
-// IMPL
-impl UniqueItem {
-
-    /// Creates a new `UniqueItem` from a given `TreasureType` and `TreasureQuantity`.
-    ///
-    /// ## Arguments
-    ///
-    /// * `ttype` - The type of the treasure.
-    /// * `quantity` - The quantity of the treasure.
-    pub fn from_treasure_type(ttype: TreasureType, quantity: TreasureQuantity) -> Self {
-        Self {
-            id: ttype.to_id(),
-            qty: quantity,
-        }
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
 /// An `enum` indicating the various types of `TreasureCollection`'s available
 ///
 /// * `Uninst` - An uninstantiated TreasureCollection (used for starting the `builder`) process
@@ -64,7 +32,6 @@ pub(crate) enum TreasureCollectionVariant {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TreasureCollection {
     pub variant: TreasureCollectionVariant,
-    pub uitems: Option<HashSet<UniqueItem>>,
     pub items: Vec<(TreasureType, TreasureQuantity)>,
     pub world_coords: Option<WorldCoordinates>,
 }
@@ -85,7 +52,6 @@ impl TreasureCollection {
 #[derive(Default)]
 pub struct TreasureCollectionBuilder {
     variant: TreasureCollectionVariant,
-    uitems: Option<HashSet<UniqueItem>>,
     items: Vec<(TreasureType, TreasureQuantity)>,
     world_coords: Option<WorldCoordinates>,
 }
@@ -104,37 +70,9 @@ impl TreasureCollectionBuilder {
     pub fn new(variant: TreasureCollectionVariant) -> TreasureCollectionBuilder {
         TreasureCollectionBuilder {
             variant,
-            uitems: None,
             items: Vec::with_capacity(1),
             world_coords: None,
         }
-    }
-
-    /// Sets the unique items for the treasure collection.
-    ///
-    /// ## Arguments
-    ///
-    /// * `uitems` - A slice of unique items to be added to the collection.
-    ///
-    /// ## Returns
-    ///
-    /// The updated `TreasureCollectionBuilder` instance.
-    ///
-    /// ## Panics
-    ///
-    /// Panics if the variant is `Uninst`.
-    pub fn unique_items(mut self, uitems: &[UniqueItem]) -> TreasureCollectionBuilder {
-        match self.variant {
-            TreasureCollectionVariant::PlayerInventory => {
-                self.uitems = Some(HashSet::from_iter(uitems.iter().cloned()));
-            }
-            _ => panic!(
-                "Unique items cannot be provided to uninstantiated-variant or TreasureChest 
-                variant treasure collections."
-            ),
-        }
-
-        self
     }
 
     /// Sets the unique items for the treasure collection.
@@ -211,7 +149,6 @@ impl TreasureCollectionBuilder {
     pub fn build(self) -> TreasureCollection {
         TreasureCollection {
             variant: self.variant,
-            uitems: self.uitems,
             items: self.items,
             world_coords: self.world_coords,
         }

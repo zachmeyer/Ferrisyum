@@ -1,5 +1,11 @@
-use crate::shared::{CommonState, KeyDoorLink, WorldCoordinates};
+// > USE
 use std::cmp::Ordering;
+
+// > CRATE
+use crate::shared::{CommonState, KeyDoorLink, WorldCoordinates};
+use crate::shared::treasures::*;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// An `enum` encapsulating different types of events that can occur in the world.
 #[derive(Debug, Eq, PartialEq, Clone)]
@@ -7,7 +13,8 @@ pub(crate) enum WorldUpdateEventType {
     Idle,
     ChangeTileState(WorldCoordinates, CommonState),
     KeyPickup(KeyDoorLink),
-    TryOpenDoor(WorldCoordinates)
+    TryOpenDoor(WorldCoordinates),
+    PickupTreasure(WorldCoordinates)
 }
 
 /// A generic struct to encapsulate world update events

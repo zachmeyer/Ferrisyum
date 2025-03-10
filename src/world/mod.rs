@@ -27,7 +27,7 @@ mod world_controller;
 pub(crate) use world_controller::*;
 
 // > CRATE
-use crate::shared::traits::{Moveable};
+use crate::shared::traits::{Moveable, Positionable};
 use crate::shared::{CommonState, KeyDoorLink, Tile, MoveDirection};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ use crate::shared::{CommonState, KeyDoorLink, Tile, MoveDirection};
 ///
 /// # Arguments
 /// * `moveable_mut` ( `&mut impl Moveable` ) - A ***mutable reference*** to any object that 
-///   implements `Moveable` ( and `Positionable` which is ***required*** by Moveable )
+///   implements `Moveable` ( and `Positionable` which is ***required*** by `Moveable` )
 /// * `world`        ( `&mut WorldController` ) - A ***mutable reference*** to the active 
 ///   WorldController
 /// * `direction` ( [MoveDirection] ) - The `enum MoveDirection` indicating the direction to move
@@ -84,5 +84,44 @@ pub fn translate<'gloop>(
         }
         
         _ => () // WALL OR ANY UNIMPLEMENTED TILE = UNPASSABLE
+    }
+}
+
+pub enum ExplicitPickupType {
+    TreasureChest
+}
+
+/// Sends a signal to the WorldController to trigger a "pickup" event explicitly (versus
+/// pickups that occur automatically during translation, e.g. `KeyPickup`)
+///
+/// # Arguments
+/// * `moveable_mut` ( `&mut impl Positionable` ) - A ***mutable reference*** to any object that 
+///   implements `Positionable`
+/// * `world`        ( `&mut WorldController` ) - A ***mutable reference*** to the active 
+///   WorldController
+/// 
+/// #### Objects must survive for lifetime <'gloop> (one iteration of the game loop)
+pub fn pickup_explicit<'gloop>(
+    positionable_mut: &'gloop mut impl Positionable, 
+    world: &'gloop mut WorldController,
+    explicit_pickup_type: ExplicitPickupType
+) {
+    type Wup = WorldUpdate<WorldUpdateEventType>;
+    type Wut = WorldUpdateEventType;
+
+    let coords = (positionable_mut.row(), positionable_mut.col());
+    let adjacents: [[usize; 2]; 4] = [
+        [coords.0.wrapping_sub(1), coords.1],
+        [coords.0.wrapping_add(1), coords.1],
+        [coords.0, coords.1.wrapping_sub(1)],
+        [coords.0, coords.1.wrapping_add(1)]
+    ];
+
+    for &[r, c] in &adjacents {
+        if  world.within_bounds(&(r as isize), &(c as isize)) 
+            && world.map.grid[(r, c)].get_properties_mut().treasure.is_some() 
+        {
+            world.queue_update(Wup::new(Wut::PickupTreasure((r, c))));
+        }
     }
 }

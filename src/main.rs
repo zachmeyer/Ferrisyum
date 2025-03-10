@@ -23,7 +23,7 @@ use shared::extlib::{
 use shared::MoveDirection;
 
 mod world;
-use world::{WorldController, WorldView, WorldUpdate, WorldUpdateEventType};
+use world::{WorldController, WorldView, WorldUpdate, WorldUpdateEventType, ExplicitPickupType};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -137,6 +137,11 @@ fn init_game_loop(mut terminal: RatatuiDefaultTerminal) -> CEResult<()> {
                 },
                 CrosstermKeyCode::Char('c') => {
                     show_stats = !show_stats;
+                }
+                CrosstermKeyCode::Char(' ') => {
+                    world::pickup_explicit(
+                        &mut player, &mut world, ExplicitPickupType::TreasureChest
+                    );
                 }
                 CrosstermKeyCode::Char('q') | CrosstermKeyCode::Esc => break Ok(()),
                 _ => (),

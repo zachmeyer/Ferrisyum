@@ -68,7 +68,9 @@ impl WorldMap {
                     {
                         tile.get_properties_mut().treasure = Some(treasure.clone());
                     } else {
-                        panic!("Invalid treasure chest tile coordinates defined for treasure tile.")
+                        panic!(
+                            "Invalid treasure chest tile location defined for treasure collection."
+                        )
                     }
                 }
 

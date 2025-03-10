@@ -5,6 +5,7 @@ use std::collections::HashSet;
 use crate::shared::extlib::NAVector3;
 use crate::shared::treasures::*;
 use crate::shared::traits::{
+    Identifiable,
     Moveable, 
     Positionable, 
     ToIdentifiableChar
@@ -41,9 +42,7 @@ impl Player {
     pub fn new(draw: char, position: NAVector3<i64>) -> Self {
         // Build the player's initial inventory
         let inventory = TreasureCollectionBuilder::new(TreasureCollectionVariant::PlayerInventory)
-            .unique_items(&[
-                UniqueItem::from_treasure_type(TreasureType::Gold, 0)
-            ]).build();
+            .items(&[(TreasureType::Gold.to_id(), 0)]).build();
 
         // When creating a new player, the current, new-, and previous- position are all the same
         Self {

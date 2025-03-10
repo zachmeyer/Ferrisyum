@@ -34,6 +34,7 @@ use crate::shared::{
     Tile,
 };
 use crate::shared::extlib::{RatatuiRect};
+use crate::shared::treasures::*;
 use crate::Player;
 use crate::world::{WorldMap, WorldUpdate, WorldUpdateEventType};
 
@@ -203,9 +204,7 @@ impl<'wctrl> WorldController<'wctrl> {
                     {
                         let (dr, dc) = (door_coords.0, door_coords.1);
 
-                        // Note we have to get a reference to the whole-ass tile here, 
-                        // not just its properties since we need to manipulate the tile's 
-                        // state as well (unlike KeyPickup which uses tp_mut)
+                        // Refer to the whole tile to allow state change
                         let t_mut = &mut self.map.grid[(dr, dc)];
                         
                         let kdl_to_remove = player.keyring.iter()
@@ -222,7 +221,50 @@ impl<'wctrl> WorldController<'wctrl> {
                         player.translate_into();
                     }
                 }
+
+                // TREAURE CHEST INTERACTION
+                WorldUpdateEventType::PickupTreasure(tcoords) => {
+                    let tr = tcoords.0;
+                    let tc = tcoords.1;
+
+                    // Refer to the whole tile to allow state change
+                    let t_mut = &mut self.map.grid[(tr, tc)];
+
+                    if t_mut.get_state().unwrap() == &CommonState::UNCOLLECTED {
+                        let tcoll = t_mut.get_properties_mut().treasure.as_ref().unwrap();
+
+                        tcoll.items.iter().for_each(|(t, q)| {
+                            match *t {
+                                TreasureType::Gold => {
+                                    // Gold always sits at index 0 in the player inventory
+                                    player.inventory.items[0].1 += q;
+                                }
+                                // TODO: Implement Armor, Weapons, and Potion Treasures
+                                TreasureType::Armor => { todo!() },
+                                TreasureType::Potion => { todo!() },
+                                TreasureType::Weapon => { todo!() }
+                            }
+                        });
+                    }
+                    
+                    t_mut.get_properties_mut().treasure = None;
+                    t_mut.get_properties_mut().draw_character = '0';
+                    t_mut.change_state(CommonState::COLLECTED);
+                }
             }
         }
+    }
+
+    /// Checks if a given row/col pair is within the map bounds. Row/col pair is passed as isize
+    /// to check for negative bounds (this shouldn't realistically happen, but just in case)
+    ///
+    /// # Arguments
+    /// * `&mut player` - ([`Player`]) A ***mutable*** reference to the player
+    /// 
+    pub fn within_bounds(&self, row: &isize, col: &isize) -> bool {
+        (
+            row >= &0 && row <= &(self.map.grid.rows() as isize)) 
+            && (col >= &0 && col <= &(self.map.grid.cols() as isize)
+        )
     }
 }
