@@ -13,9 +13,7 @@ use regex::Regex;
 
 // > CRATE
 use crate::shared::{
-    KeyDoorLink,
-    Tile,
-    traits::{IdentifiableChar, Positionable}
+    traits::{IdentifiableChar, Positionable}, CommonState, KeyDoorLink, Tile
 };
 use crate::shared::treasure::*;
 
@@ -43,6 +41,9 @@ impl WorldMap {
             lines.first().map_or(0, |line| line.1.len() * 2),
         );
 
+        let mut key_count = 0;
+        let mut locked_door_count = 0;
+
         for (row, line) in lines {
             for (col, c) in line.char_indices() {
                 let mut tile = Tile::from_char_id(c);
@@ -61,7 +62,8 @@ impl WorldMap {
                         else {
                             panic!("Invalid key tile location defined for linking door.")
                         },
-                    )
+                    );
+                    key_count += 1;
                 }
                 else if let Tile::Treasure(_, _) = tile {
                     let tr = tile.row();
@@ -74,11 +76,25 @@ impl WorldMap {
                         panic!("Invalid treasure chest tile location defined.")
                     }
                 }
+                else if let Tile::Door(_, CommonState::LOCKED) = tile {
+                    locked_door_count += 1;
+                }
 
                 if col < grid.cols() && row < grid.rows() {
                     grid[(row, col)] = tile;
                 }
             }
+        }
+
+        // Ensure the map has an appropriate number of keys for unlocking doors
+        match key_count.cmp(&locked_door_count) {
+            std::cmp::Ordering::Greater => panic!(
+                "There are too many keys compared to the number of locked doors."
+            ),
+            std::cmp::Ordering::Less => panic!(
+                "There are too many locked doors compared to the number of keys."
+            ),
+            std::cmp::Ordering::Equal => {},
         }
 
         Self { id: assigned_id, grid  }
