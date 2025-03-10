@@ -3,7 +3,7 @@ use std::collections::HashSet;
 
 // > USE CRATE
 use crate::shared::extlib::NAVector3;
-use crate::shared::treasures::*;
+use crate::shared::treasure::*;
 use crate::shared::traits::{
     Identifiable,
     Moveable, 

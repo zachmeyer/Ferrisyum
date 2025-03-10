@@ -1,11 +1,8 @@
 use std::collections::{HashMap, HashSet};
 
-// > SUPER
-use super::{
-    treasures::*,
-    WorldCoordinates,
-    traits::{Identifiable, IdentifiableFrom}
-};
+// > CRATE / SUPER
+use crate::shared::{WorldCoordinates, traits::{Identifiable, IdentifiableFrom}};
+use super::{TreasureID, TreasureQuantity};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

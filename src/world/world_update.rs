@@ -3,7 +3,7 @@ use std::cmp::Ordering;
 
 // > CRATE
 use crate::shared::{CommonState, KeyDoorLink, WorldCoordinates};
-use crate::shared::treasures::*;
+use crate::shared::treasure::*;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 

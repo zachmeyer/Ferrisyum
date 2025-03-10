@@ -34,7 +34,7 @@ use crate::shared::{
     Tile,
 };
 use crate::shared::extlib::{RatatuiRect};
-use crate::shared::treasures::*;
+use crate::shared::treasure::*;
 use crate::Player;
 use crate::world::{WorldMap, WorldUpdate, WorldUpdateEventType};
 

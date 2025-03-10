@@ -1,5 +1,5 @@
 // > USE CRATE
-use crate::shared::treasures::*;
+use crate::shared::treasure::*;
 use crate::shared::traits::{IdentifiableChar, Positionable};
 use crate::shared::{
     Column, 

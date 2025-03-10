@@ -18,7 +18,7 @@ use crate::shared::{
     Tile,
     traits::{IdentifiableChar, Positionable}
 };
-use crate::shared::treasures::*;
+use crate::shared::treasure::*;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
