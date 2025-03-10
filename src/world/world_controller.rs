@@ -71,6 +71,7 @@ impl<'wctrl> WorldController<'wctrl> {
     ///
     /// # Arguments
     /// * `&player` - ([`Player`]) An ***immutable*** reference to the player object.
+    /// 
     pub fn generate_map(&'wctrl self, player: &'wctrl Player) -> impl Widget + 'wctrl {
         /// ## MapWidget
         /// 
@@ -80,6 +81,7 @@ impl<'wctrl> WorldController<'wctrl> {
             player: &'wctrl Player,
         }
 
+        // IMPL MapWidget
         impl<'wctrl> Widget for MapWidget<'wctrl> {
             fn render(self, area: Rect, buf: &mut Buffer) {
                 let map_width = self.controller.map.grid.cols();
@@ -154,6 +156,7 @@ impl<'wctrl> WorldController<'wctrl> {
     ///
     /// # Arguments
     /// * `update<T: WorldUpdateEventType>` - ([`WorldUpdate`]) The world update event to queue
+    /// 
     pub fn queue_update(&mut self, update: WorldUpdate<WorldUpdateEventType>) {
         self.update_queue.push(update);
     }
@@ -162,6 +165,7 @@ impl<'wctrl> WorldController<'wctrl> {
     ///
     /// # Arguments
     /// * `&mut player` - ([`Player`]) A ***mutable*** reference to the player
+    /// 
     pub fn update_world(&mut self, player: &mut Player) {
         while let Some(update) = self.update_queue.pop() {
             match update.event_type {

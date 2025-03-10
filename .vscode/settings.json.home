@@ -1,0 +1,73 @@
+{
+    "chat.editor.fontSize": 12,
+    "editor.bracketPairColorization.enabled": true,
+    "editor.fontFamily": "'JetBrainsMono Nerd Font\", monospace",
+    "editor.fontSize": 12,
+    "editor.inlayHints.enabled": "offUnlessPressed",
+    "editor.fontLigatures": true,
+    "editor.letterSpacing": 1,
+    "editor.lineHeight": 17,
+    "editor.minimap.autohide": true,
+    "editor.rulers": [
+        {
+            "color": "#f0f0f010",
+            "column": 100
+        }
+    ],
+    "editor.semanticHighlighting.enabled": true,
+    "editor.semanticTokenColorCustomizations": {
+        "[soft sight]": {
+            "enabled": true
+        },
+        "enabled": true,
+        "rules": {
+            "*.mutable": {
+                "underline": false
+            },
+            "comment": {
+                "foreground": "#3cff0073"
+            },
+            "enumMember": {
+                "underline": false
+            }
+        }
+    },
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "git.enableSmartCommit": true,
+    "github.copilot.chat.codesearch.enabled": true,
+    "github.copilot.chat.copilotDebugCommand.enabled": false,
+    "github.copilot.editor.enableAutoCompletions": false,
+    "rust-analyzer.check.command": "clippy",
+    "terminal.integrated.fontSize": 12,
+    "terminal.integrated.letterSpacing": 0,
+    "terminal.integrated.hideOnStartup": "always",
+    "terminal.integrated.initialHint": false,
+    "terminal.integrated.suggest.enabled": false,
+    "terminal.integrated.fontFamily": "Fira Code, monospace",
+    "workbench.colorCustomizations": {
+        "terminal.background": "#1e1e1e"
+    },
+    "workbench.iconTheme": "material-icon-theme",
+    "terminal.integrated.profiles.linux": {
+        "bash": {
+            "path": "bash",
+            "icon": "terminal-bash"
+        },
+        "zsh": {
+            "path": "zsh"
+        },
+        "fish": {
+            "path": "fish"
+        },
+        "tmux": {
+            "path": "tmux",
+            "icon": "terminal-tmux"
+        },
+        "pwsh": {
+            "path": "pwsh",
+            "icon": "terminal-powershell"
+        }
+    },
+    "workbench.colorTheme": "Dark Green Jungle"
+}

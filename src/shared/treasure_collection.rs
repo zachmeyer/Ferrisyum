@@ -4,7 +4,7 @@ use std::collections::{HashMap, HashSet};
 use super::{
     treasures::*,
     WorldCoordinates,
-    traits::Identifiable
+    traits::{Identifiable, IdentifiableFrom}
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ pub(crate) enum TreasureCollectionVariant {
 pub struct TreasureCollection {
     pub variant: TreasureCollectionVariant,
     pub uitems: Option<HashSet<UniqueItem>>,
-    pub items: HashMap<TreasureID, TreasureQuantity>,
+    pub items: Vec<(TreasureType, TreasureQuantity)>,
     pub world_coords: Option<WorldCoordinates>,
 }
 
@@ -86,7 +86,7 @@ impl TreasureCollection {
 pub struct TreasureCollectionBuilder {
     variant: TreasureCollectionVariant,
     uitems: Option<HashSet<UniqueItem>>,
-    items: HashMap<TreasureID, TreasureQuantity>,
+    items: Vec<(TreasureType, TreasureQuantity)>,
     world_coords: Option<WorldCoordinates>,
 }
 
@@ -105,7 +105,7 @@ impl TreasureCollectionBuilder {
         TreasureCollectionBuilder {
             variant,
             uitems: None,
-            items: HashMap::with_capacity(1),
+            items: Vec::with_capacity(1),
             world_coords: None,
         }
     }
@@ -125,12 +125,12 @@ impl TreasureCollectionBuilder {
     /// Panics if the variant is `Uninst`.
     pub fn unique_items(mut self, uitems: &[UniqueItem]) -> TreasureCollectionBuilder {
         match self.variant {
-            TreasureCollectionVariant::PlayerInventory
-            | TreasureCollectionVariant::TreasureChest => {
+            TreasureCollectionVariant::PlayerInventory => {
                 self.uitems = Some(HashSet::from_iter(uitems.iter().cloned()));
             }
             _ => panic!(
-                "Unique items cannot be provided to uninstantiated-variant treasure collections."
+                "Unique items cannot be provided to uninstantiated-variant or TreasureChest 
+                variant treasure collections."
             ),
         }
 
@@ -141,7 +141,7 @@ impl TreasureCollectionBuilder {
     ///
     /// ## Arguments
     ///
-    /// * `uitems` - A slice of unique items to be added to the collection.
+    /// * `items` - A slice of unique items to be added to the collection.
     ///
     /// ## Returns
     ///
@@ -154,7 +154,12 @@ impl TreasureCollectionBuilder {
         match self.variant {
             TreasureCollectionVariant::PlayerInventory
             | TreasureCollectionVariant::TreasureChest => {
-                self.items = HashMap::from_iter(items.iter().cloned());
+                items.iter().for_each(|(tid, tqty)| {
+                    self.items.push((
+                        TreasureType::from_id(*tid),
+                        *tqty
+                    ))
+                });
                 self
             }
             _ => panic!(
@@ -234,6 +239,18 @@ impl Identifiable for TreasureType {
             TreasureType::Potion => 2,
             TreasureType::Armor => 3,
             TreasureType::Weapon => 4,
+        }
+    }
+}
+
+impl IdentifiableFrom for TreasureType {
+    fn from_id(id: usize) -> Self {
+        match id {
+            1 => TreasureType::Gold,
+            2 => TreasureType::Potion,
+            3 => TreasureType::Armor,
+            4 => TreasureType::Weapon,
+            _ => panic!("Treasure Type Usize ID not implemented as valid TreasureType.")
         }
     }
 }

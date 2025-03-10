@@ -1,0 +1,79 @@
+{
+    "chat.editor.fontSize": 10,
+    "editor.bracketPairColorization.enabled": true,
+    "editor.fontFamily": "'Fira Code Light', monospace",
+    "editor.fontLigatures": true,
+    "editor.fontSize": 11,
+    "editor.fontWeight": "300",
+    "editor.inlayHints.enabled": "offUnlessPressed",
+    "editor.letterSpacing": 0.5,
+    "editor.lineHeight": 18,
+    "editor.minimap.autohide": true,
+    "editor.rulers": [
+        {
+            "color": "#f0f0f010",
+            "column": 100
+        }
+    ],
+    "editor.semanticHighlighting.enabled": true,
+    "editor.semanticTokenColorCustomizations": {
+        "[OneCalm]": {
+            "enabled": true,
+            "rules": {
+                "*.mutable": {
+                    "underline": false
+                },
+                "comment": {
+                    "fontStyle": "italic",
+                    "foreground": "#e733abbe"
+                },
+                "enumMember": {
+                    "underline": false
+                },
+                "struct.documentation.injected.intraDocLink": {
+                    "fontStyle": "italic underline",
+                    "foreground": "#e733cfcb"
+                }
+            }
+        },
+    },
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "git.enableSmartCommit": true,
+    "github.copilot.chat.codesearch.enabled": true,
+    "github.copilot.chat.copilotDebugCommand.enabled": false,
+    "github.copilot.editor.enableAutoCompletions": false,
+    "rust-analyzer.check.command": "clippy",
+    "terminal.integrated.fontFamily": "Fira Code, monospace",
+    "terminal.integrated.fontSize": 12,
+    "terminal.integrated.hideOnStartup": "always",
+    "terminal.integrated.initialHint": false,
+    "terminal.integrated.letterSpacing": 0,
+    "terminal.integrated.profiles.linux": {
+        "bash": {
+            "icon": "terminal-bash",
+            "path": "bash"
+        },
+        "fish": {
+            "path": "fish"
+        },
+        "pwsh": {
+            "icon": "terminal-powershell",
+            "path": "pwsh"
+        },
+        "tmux": {
+            "icon": "terminal-tmux",
+            "path": "tmux"
+        },
+        "zsh": {
+            "path": "zsh"
+        }
+    },
+    "terminal.integrated.suggest.enabled": false,
+    "window.zoomLevel": 0,
+    "workbench.colorCustomizations": {
+        "terminal.background": "#1e1e1e"
+    },
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.colorTheme": "OneCalm",
+}

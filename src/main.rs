@@ -48,18 +48,18 @@ fn init_game_loop(mut terminal: RatatuiDefaultTerminal) -> CEResult<()> {
 
     let mut player = Player::new('@', NAVector3::new(2, 1, 1));
     let mut world = WorldController::new(&mut world_update_queue);
+    let mut show_stats = true;
+    let mut show_inventory = true;
     
     loop {
         // TODO: THIS NEEDS TO BE MOVED INTO A UI/INPUT HANDLING MODULE ///////////////////////////
         terminal.draw(|f| {
-            let show_stats = true;
-            
             let vertical_chunks = if show_stats {
                 Layout::default()
                     .direction(Direction::Vertical)
                     .constraints([
-                        Constraint::Min(10),
-                        Constraint::Length(5),
+                        Constraint::Min(30),
+                        Constraint::Percentage(30), 
                     ])
                     .split(f.area())
             } else {
@@ -71,15 +71,13 @@ fn init_game_loop(mut terminal: RatatuiDefaultTerminal) -> CEResult<()> {
                     ])
                     .split(f.area())
             };
-            
-            let show_inventory = true;
-            
+
             let horizontal_chunks = if show_inventory {
                 Layout::default()
                     .direction(Direction::Horizontal)
                     .constraints([
-                        Constraint::Percentage(70),
-                        Constraint::Percentage(30),
+                        Constraint::Percentage(70), 
+                        Constraint::Percentage(30), 
                     ])
                     .split(vertical_chunks[0])
             } else {
@@ -91,13 +89,13 @@ fn init_game_loop(mut terminal: RatatuiDefaultTerminal) -> CEResult<()> {
                     ])
                     .split(f.area())
             };
-            
+
             // Create the WorldView which will handle rendering the map
             let world_view = WorldView::new(&world, &player);
-            
+
             // Render the WorldView in the game area
             f.render_widget(world_view, horizontal_chunks[0]);
-            
+
             // Render inventory if visible
             if show_inventory {
                 f.render_widget(
@@ -107,8 +105,8 @@ fn init_game_loop(mut terminal: RatatuiDefaultTerminal) -> CEResult<()> {
                     horizontal_chunks[1]
                 );
             }
-            
-            // Render stats if visible
+                
+            // Render messages is visible
             if show_stats {
                 f.render_widget(
                     Block::default()
@@ -133,6 +131,12 @@ fn init_game_loop(mut terminal: RatatuiDefaultTerminal) -> CEResult<()> {
                 }
                 CrosstermKeyCode::Char('d') | CrosstermKeyCode::Right => {
                     world::translate(&mut player, &mut world, MoveDirection::RIGHT);
+                }
+                CrosstermKeyCode::Char('i') => {
+                    show_inventory = !show_inventory;
+                },
+                CrosstermKeyCode::Char('c') => {
+                    show_stats = !show_stats;
                 }
                 CrosstermKeyCode::Char('q') | CrosstermKeyCode::Esc => break Ok(()),
                 _ => (),
