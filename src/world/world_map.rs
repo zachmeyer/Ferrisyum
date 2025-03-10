@@ -8,7 +8,6 @@
 //! #### Author: [Zach Meyer / SmlfrySamuri](https://github.com/zachmeyer)
 
 // > USE
-use std::collections::HashSet;
 use grid::*;
 use regex::Regex;
 

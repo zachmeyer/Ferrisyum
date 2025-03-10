@@ -1,5 +1,5 @@
-use std::collections::{HashMap, HashSet};
-
+//
+//
 // > CRATE / SUPER
 use crate::shared::{WorldCoordinates, traits::{Identifiable, IdentifiableFrom}};
 use super::{TreasureID, TreasureQuantity};
@@ -35,6 +35,8 @@ pub struct TreasureCollection {
 
 // IMPL
 impl TreasureCollection {
+    
+    #[allow(dead_code)]
     pub fn builder() -> TreasureCollectionBuilder {
         TreasureCollectionBuilder::default()
     }

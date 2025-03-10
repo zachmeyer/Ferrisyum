@@ -28,7 +28,7 @@ pub(crate) use world_controller::*;
 
 // > CRATE
 use crate::shared::traits::{Moveable, Positionable};
-use crate::shared::{CommonState, KeyDoorLink, Tile, MoveDirection};
+use crate::shared::{CommonState, Tile, MoveDirection};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -121,7 +121,11 @@ pub fn pickup_explicit<'gloop>(
         if  world.within_bounds(&(r as isize), &(c as isize)) 
             && world.map.grid[(r, c)].get_properties_mut().treasure.is_some() 
         {
-            world.queue_update(Wup::new(Wut::PickupTreasure((r, c))));
+            match explicit_pickup_type {
+                ExplicitPickupType::TreasureChest => world.queue_update(
+                    Wup::new(Wut::PickupTreasure((r, c)))
+                )
+            }
         }
     }
 }

@@ -15,25 +15,16 @@
 
 // > USE
 use std::collections::BinaryHeap;
-use std::cell::RefCell;
 use std::io::Read;
-use grid::*;
-use regex::Regex;
 use ratatui::prelude::*;
-use ratatui::widgets::{Block, Borders, Widget, StatefulWidget};
+use ratatui::widgets::{Block, Borders, Widget};
 
 // > CRATE
 use crate::shared::constants::TILE_WIDTH;
 use crate::shared::traits::{
-    IdentifiableChar, Moveable, Positionable, ToIdentifiableChar
+    Moveable, Positionable, ToIdentifiableChar
 };
-use crate::shared::{
-    CommonState,
-    KeyDoorLink, 
-    MoveDirection,  
-    Tile,
-};
-use crate::shared::extlib::{RatatuiRect};
+use crate::shared::CommonState;
 use crate::shared::treasure::*;
 use crate::Player;
 use crate::world::{WorldMap, WorldUpdate, WorldUpdateEventType};
@@ -198,10 +189,7 @@ impl<'wctrl> WorldController<'wctrl> {
                  // -> Does not open without the appropriate KeyDoorLink on the player's keyring
                  WorldUpdateEventType::TryOpenDoor(door_coords) => {
                     // Find the matching KeyDoorLink that opens this door
-                    if let Some(position) = player
-                        .keyring
-                        .iter()
-                        .position(|kdl| kdl.door == door_coords) 
+                    if player.keyring.iter().any(|kdl| kdl.door == door_coords)
                     {
                         let (dr, dc) = (door_coords.0, door_coords.1);
 

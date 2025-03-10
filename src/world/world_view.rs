@@ -44,7 +44,6 @@ impl<'wview> RatatuiWidget for WorldView<'wview> {
     /// * `buf` - The buffer to render the world view into.
     fn render(self, area: RatatuiRect, buf: &mut RatatuiBuffer) {
             let world = self.world;
-            let player = self.player;
             let map_widget = world.generate_map(self.player);
 
             map_widget.render(area, buf);

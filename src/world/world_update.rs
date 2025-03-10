@@ -1,3 +1,5 @@
+#![allow(dead_code, unused_imports)]
+
 // > USE
 use std::cmp::Ordering;
 

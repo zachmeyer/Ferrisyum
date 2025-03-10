@@ -13,8 +13,7 @@ use crate::shared::traits::{
 use crate::shared::{
     Column, Row,
     KeyDoorLink, 
-    MoveDirection, 
-    TileProperties
+    MoveDirection,
 };
 
 

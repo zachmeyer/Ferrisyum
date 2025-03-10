@@ -2,7 +2,6 @@
 use crate::shared::{
     Column, Row, 
     MoveDirection, 
-    TileProperties,
     traits::Positionable
 };
 

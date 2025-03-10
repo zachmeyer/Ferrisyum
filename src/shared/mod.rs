@@ -49,4 +49,4 @@ mod move_direction;
 pub use move_direction::MoveDirection;
 
 mod tile;
-pub use tile::{Tile, TileProperties};
+pub use tile::Tile;
