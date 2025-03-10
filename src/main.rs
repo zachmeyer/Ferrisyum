@@ -8,8 +8,11 @@ use std::collections::BinaryHeap;
 
 // > USE 3P
 use color_eyre::Result as CEResult;
-use ratatui::layout::{Layout, Direction, Constraint};
-use ratatui::widgets::{Block, Borders};
+use ratatui::{
+    layout::{Layout, Direction, Constraint},
+    text::Text,
+    widgets::{Block, Borders, Padding, Paragraph}
+};
 
 // < MOD
 mod player;
@@ -108,12 +111,15 @@ fn init_game_loop(mut terminal: RatatuiDefaultTerminal) -> CEResult<()> {
                 
             // Render messages is visible
             if show_stats {
-                f.render_widget(
-                    Block::default()
-                        .title("Stats")
-                        .borders(Borders::ALL), 
-                    vertical_chunks[1]
-                );
+                let stats_block = Block::default()
+                    .title("Stats")
+                    .borders(Borders::ALL)
+                    .padding(Padding::new(1, 1, 1, 1));
+
+                let gold_text = Paragraph::new(Text::raw(format!("Gold: {}", player.gold_qty())))
+                    .block(stats_block);
+
+                f.render_widget(gold_text, vertical_chunks[1]);
             }
         })?;
         ////////////////////////////////////////////////////////////////////////////////////// TODO

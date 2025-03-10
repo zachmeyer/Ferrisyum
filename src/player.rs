@@ -54,6 +54,18 @@ impl Player {
             inventory,
         }
     }
+
+    /// Fetches the player's gold quantity (`u64`) in a safe way, considering the player's gold
+    /// should always sit at index 0 in their `inventory`
+    pub fn gold_qty(&self) -> u64 {
+        self.inventory.items[0].1
+    }
+
+    /// Increases the player's gold quantity (`u64`) in a safe way, considering the player's gold
+    /// should always sit at index 0 in their `inventory`
+    pub fn add_gold(&mut self, quantity: u64) {
+        self.inventory.items[0].1 += quantity;
+    }
 }
 
 // IMPL Positionable

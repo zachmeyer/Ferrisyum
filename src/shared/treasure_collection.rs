@@ -187,15 +187,7 @@ impl IdentifiableFrom for TreasureType {
             2 => TreasureType::Potion,
             3 => TreasureType::Armor,
             4 => TreasureType::Weapon,
-            _ => panic!("Treasure Type Usize ID not implemented as valid TreasureType.")
+            _ => panic!("Treasure Type usize id not implemented as valid TreasureType.")
         }
     }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/// A struct encapsulating a treasure with a specified `t_`type
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Treasure {
-    pub t_type: TreasureType
 }

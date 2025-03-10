@@ -56,7 +56,7 @@ impl<'wctrl> WorldController<'wctrl> {
     /// * `update_queue` ([BinaryHeap]) - Handles [WorldUpdate] requests 
     pub fn new(update_queue: &'wctrl mut BinaryHeap<WorldUpdate<WorldUpdateEventType>>) -> Self {
         
-        // TODO: THIS NEEDS TO BE ABLE TO READ OTHER FILES (MAPS) ///////////////////////////
+        // TODO: THIS NEEDS TO BE ABLE TO READ OTHER FILES (MAPS) /////////////////////////////////
         let mut buf: Vec<u8> = vec![];
         std::fs::File::open_buffered("assets/test_map1.txt")
                                 .expect("Unable to open test map file.")
@@ -66,6 +66,7 @@ impl<'wctrl> WorldController<'wctrl> {
             map: WorldMap::from_bytes(&buf),
             update_queue
         }
+        ////////////////////////////////////////////////////////////////////////////////////// TODO
     }
 
     /// Handles updates pushed to the update event queue
@@ -237,7 +238,7 @@ impl<'wctrl> WorldController<'wctrl> {
                             match *t {
                                 TreasureType::Gold => {
                                     // Gold always sits at index 0 in the player inventory
-                                    player.inventory.items[0].1 += q;
+                                    player.add_gold(*q);
                                 }
                                 // TODO: Implement Armor, Weapons, and Potion Treasures
                                 TreasureType::Armor => { todo!() },
