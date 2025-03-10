@@ -12,6 +12,6 @@ use super::WorldCoordinates;
 /// #### Author: [Zach Meyer / SmlfrySamuri](https://github.com/zachmeyer)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct KeyDoorLink {
-    pub key: WorldCoordinates,
-    pub door: WorldCoordinates,
+    pub key_coords: WorldCoordinates,
+    pub door_coords: WorldCoordinates,
 }

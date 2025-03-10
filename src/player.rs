@@ -27,7 +27,7 @@ pub struct Player {
     new_position: NAVector3<i64>,
     previous_position: NAVector3<i64>,
     
-    pub keyring: HashSet<KeyDoorLink>,
+    pub keyring: Vec<KeyDoorLink>,
     pub inventory: TreasureCollection,
 }
 
@@ -47,7 +47,7 @@ impl Player {
         Self {
             new_position: position,
             previous_position: position,
-            keyring: HashSet::new(),
+            keyring: vec![],
             draw,
             position,
             inventory,

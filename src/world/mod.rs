@@ -53,7 +53,7 @@ pub fn translate<'gloop>(
     moveable_mut.translate(direction);
     let new_coords = (moveable_mut.new_row(), moveable_mut.new_col());
 
-    match &world.map.grid[new_coords] {
+    match &world.maps[0].grid[new_coords] {
 
         // MOVING ONTO FLOOR TILE
         // -> Can contain event, but currently no floor tiles do
@@ -119,7 +119,7 @@ pub fn pickup_explicit<'gloop>(
 
     for &[r, c] in &adjacents {
         if  world.within_bounds(&(r as isize), &(c as isize)) 
-            && world.map.grid[(r, c)].get_properties_mut().treasure.is_some() 
+            && world.maps[0].grid[(r, c)].get_properties_mut().treasure.is_some() 
         {
             match explicit_pickup_type {
                 ExplicitPickupType::TreasureChest => world.queue_update(

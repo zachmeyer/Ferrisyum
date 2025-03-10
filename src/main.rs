@@ -53,7 +53,11 @@ fn init_game_loop(mut terminal: RatatuiDefaultTerminal) -> CEResult<()> {
     let mut world = WorldController::new(&mut world_update_queue);
     let mut show_stats = true;
     let mut show_inventory = true;
+
+    // Load maps
+    world.load_map_from_fstr("assets/test_map1.txt");
     
+    // Start game loop
     loop {
         // TODO: THIS NEEDS TO BE MOVED INTO A UI/INPUT HANDLING MODULE ///////////////////////////
         terminal.draw(|f| {
@@ -109,7 +113,7 @@ fn init_game_loop(mut terminal: RatatuiDefaultTerminal) -> CEResult<()> {
                 );
             }
                 
-            // Render messages is visible
+            // Render stats if visible
             if show_stats {
                 let stats_block = Block::default()
                     .title("Stats")

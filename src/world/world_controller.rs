@@ -14,8 +14,9 @@
 //! #### Author: [Zach Meyer / SmlfrySamuri](https://github.com/zachmeyer)
 
 // > USE
-use std::collections::BinaryHeap;
+use std::collections::{BinaryHeap};
 use std::io::Read;
+use std::path::Path;
 use ratatui::prelude::*;
 use ratatui::widgets::{Block, Borders, Widget};
 
@@ -36,7 +37,7 @@ use crate::world::{WorldMap, WorldUpdate, WorldUpdateEventType};
 /// Controls the map state and handles queued world update events,
 /// such as key pickups and door interactions.
 pub struct WorldController<'wctrl> {
-    pub map: WorldMap,
+    pub maps: Vec<WorldMap>,
     pub update_queue: &'wctrl mut BinaryHeap<WorldUpdate<WorldUpdateEventType>>,
 }
 
@@ -46,18 +47,23 @@ impl<'wctrl> WorldController<'wctrl> {
     /// # Arguments
     /// * `update_queue` ([BinaryHeap]) - Handles [WorldUpdate] requests 
     pub fn new(update_queue: &'wctrl mut BinaryHeap<WorldUpdate<WorldUpdateEventType>>) -> Self {
-        
-        // TODO: THIS NEEDS TO BE ABLE TO READ OTHER FILES (MAPS) /////////////////////////////////
-        let mut buf: Vec<u8> = vec![];
-        std::fs::File::open_buffered("assets/test_map1.txt")
-                                .expect("Unable to open test map file.")
-                                .read_to_end(&mut buf)
-                                .expect("Unable to read contents of test map file.");
         Self {
-            map: WorldMap::from_bytes(&buf),
+            maps: vec![],
             update_queue
         }
-        ////////////////////////////////////////////////////////////////////////////////////// TODO
+    }
+
+    pub fn load_map_from_fstr(&mut self, map_file: &str) {
+        let mut buf: Vec<u8> = vec![];
+        std::fs::File::open_buffered(Path::new(map_file))
+                                .unwrap_or_else(|_| panic!(
+                                    "Unable to open map file: {}.", map_file
+                                ))
+                                .read_to_end(&mut buf)
+                                .expect("Unable to read contents of test file.");
+        let assigned_id = self.next_map_id();
+
+        self.maps.push(WorldMap::from_bytes(&buf, assigned_id));
     }
 
     /// Handles updates pushed to the update event queue
@@ -77,8 +83,8 @@ impl<'wctrl> WorldController<'wctrl> {
         // IMPL MapWidget
         impl<'wctrl> Widget for MapWidget<'wctrl> {
             fn render(self, area: Rect, buf: &mut Buffer) {
-                let map_width = self.controller.map.grid.cols();
-                let map_height = self.controller.map.grid.rows();
+                let map_width = self.controller.maps[0].grid.cols();
+                let map_height = self.controller.maps[0].grid.rows();
 
                 let world_width = map_width as u16 + 2;
                 let world_height = map_height as u16 + 2;
@@ -93,8 +99,8 @@ impl<'wctrl> WorldController<'wctrl> {
 
                 for row in 0..map_height {
                     for col in 0..(map_width / TILE_WIDTH as usize) {
-                        if  row >= self.controller.map.grid.rows() 
-                            || col >= self.controller.map.grid.cols() 
+                        if  row >= self.controller.maps[0].grid.rows() 
+                            || col >= self.controller.maps[0].grid.cols() 
                         {
                             continue;
                         }
@@ -102,7 +108,7 @@ impl<'wctrl> WorldController<'wctrl> {
                         let x = inner.x + (col as u16 * TILE_WIDTH);
                         let y = inner.y + row as u16;
 
-                        let tile = &self.controller.map.grid[(row, col)];
+                        let tile = &self.controller.maps[0].grid[(row, col)];
                         let c = tile.to_char_id();
                         let style = Style::default().bg(Color::Black);
 
@@ -175,12 +181,12 @@ impl<'wctrl> WorldController<'wctrl> {
 
                 // KEY PICKUP
                 WorldUpdateEventType::KeyPickup(kdl) => { 
-                    let (kr, kc) = (kdl.key.0, kdl.key.1);
+                    let (kr, kc) = (kdl.key_coords.0, kdl.key_coords.1);
 
                     // We can get away with just getting a reference to the TileProperties
-                    let tp_mut = &mut self.map.grid[(kr, kc)].get_properties_mut();
+                    let tp_mut = &mut self.maps[0].grid[(kr, kc)].get_properties_mut();
 
-                    player.keyring.insert(kdl);
+                    player.keyring.push(kdl);
                     tp_mut.kdl = None;
                     tp_mut.draw_character = '.';
                  },
@@ -189,21 +195,10 @@ impl<'wctrl> WorldController<'wctrl> {
                  // -> Does not open without the appropriate KeyDoorLink on the player's keyring
                  WorldUpdateEventType::TryOpenDoor(door_coords) => {
                     // Find the matching KeyDoorLink that opens this door
-                    if player.keyring.iter().any(|kdl| kdl.door == door_coords)
-                    {
-                        let (dr, dc) = (door_coords.0, door_coords.1);
-
-                        // Refer to the whole tile to allow state change
-                        let t_mut = &mut self.map.grid[(dr, dc)];
-                        
-                        let kdl_to_remove = player.keyring.iter()
-                            .find(|kdl| kdl.door == door_coords)
-                            .cloned();
-                        
-                        if let Some(kdl) = kdl_to_remove {
-                            player.keyring.remove(&kdl);
-                        }
-                        
+                    if let Some(kdl) = player.keyring.pop_if(|kdl| kdl.door_coords == door_coords) {
+                        let dr = door_coords.0;
+                        let dc = door_coords.1;
+                        let t_mut = &mut self.maps[0].grid[(dr, dc)];
                         t_mut.get_properties_mut().kdl = None;
                         t_mut.get_properties_mut().draw_character = '\\';
                         t_mut.change_state(CommonState::UNLOCKED);
@@ -217,17 +212,14 @@ impl<'wctrl> WorldController<'wctrl> {
                     let tc = tcoords.1;
 
                     // Refer to the whole tile to allow state change
-                    let t_mut = &mut self.map.grid[(tr, tc)];
+                    let t_mut = &mut self.maps[0].grid[(tr, tc)];
 
                     if t_mut.get_state().unwrap() == &CommonState::UNCOLLECTED {
                         let tcoll = t_mut.get_properties_mut().treasure.as_ref().unwrap();
 
                         tcoll.items.iter().for_each(|(t, q)| {
                             match *t {
-                                TreasureType::Gold => {
-                                    // Gold always sits at index 0 in the player inventory
-                                    player.add_gold(*q);
-                                }
+                                TreasureType::Gold => { player.add_gold(*q) }
                                 // TODO: Implement Armor, Weapons, and Potion Treasures
                                 TreasureType::Armor => { todo!() },
                                 TreasureType::Potion => { todo!() },
@@ -252,8 +244,12 @@ impl<'wctrl> WorldController<'wctrl> {
     /// 
     pub fn within_bounds(&self, row: &isize, col: &isize) -> bool {
         (
-            row >= &0 && row <= &(self.map.grid.rows() as isize)) 
-            && (col >= &0 && col <= &(self.map.grid.cols() as isize)
+            row >= &0 && row <= &(self.maps[0].grid.rows() as isize)) 
+            && (col >= &0 && col <= &(self.maps[0].grid.cols() as isize)
         )
+    }
+
+    pub fn next_map_id(&self) -> usize {
+        if self.maps.is_empty() { self.maps.len() } else { self.maps.len() + 1 }
     }
 }

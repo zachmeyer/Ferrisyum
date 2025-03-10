@@ -23,7 +23,8 @@ use crate::shared::treasure::*;
 
 /// "Containerizes" the Grid<Tile> of the WorldMap
 pub struct WorldMap {
-   pub grid: Grid<Tile>,
+    pub id: usize,
+    pub grid: Grid<Tile>,
 }
 
 impl WorldMap {
@@ -31,7 +32,7 @@ impl WorldMap {
     ///
     /// # Arguments
     /// * `bytes` (`&[u8]`) - The bytes of the txt WorldMap file. 
-    pub fn from_bytes(bytes: &[u8]) -> Self {
+    pub fn from_bytes(bytes: &[u8], assigned_id: usize) -> Self {
         let contents = String::from_utf8_lossy(bytes);
         let lines = extract_map_lines(&contents);
         let key_door_links = parse_key_door_links(&contents);
@@ -52,9 +53,12 @@ impl WorldMap {
                     let tr = tile.row();
                     let tc = tile.col();
                     tile.get_properties_mut().link_door(
-                        if let Some(kdl) = key_door_links.iter().find(|kdl| kdl.key == (tr, tc)) {
+                        if let Some(kdl) = key_door_links.iter()
+                            .find(|kdl| kdl.key_coords.eq(&(tr, tc))) 
+                        { 
                             *kdl 
-                        } else {
+                        } 
+                        else {
                             panic!("Invalid key tile location defined for linking door.")
                         },
                     )
@@ -67,9 +71,7 @@ impl WorldMap {
                     {
                         tile.get_properties_mut().treasure = Some(treasure.clone());
                     } else {
-                        panic!(
-                            "Invalid treasure chest tile location defined for treasure collection."
-                        )
+                        panic!("Invalid treasure chest tile location defined.")
                     }
                 }
 
@@ -79,7 +81,7 @@ impl WorldMap {
             }
         }
 
-        Self { grid }
+        Self { id: assigned_id, grid  }
     }
 }
 
@@ -108,8 +110,8 @@ fn parse_key_door_links(contents: &str) -> Vec<KeyDoorLink> {
         .skip_while(|ln| !ln.starts_with('~'))
         .filter_map(|line| {
             re.captures(line).map(|cap| KeyDoorLink {
-                key: (cap[1].parse().unwrap(), cap[2].parse().unwrap()),
-                door: (cap[3].parse().unwrap(), cap[4].parse().unwrap()),
+                key_coords: (cap[1].parse().unwrap(), cap[2].parse().unwrap()),
+                door_coords: (cap[3].parse().unwrap(), cap[4].parse().unwrap()),
             })
         })
         .collect()

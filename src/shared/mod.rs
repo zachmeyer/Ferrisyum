@@ -42,6 +42,8 @@ pub(crate) type WorldCoordinates = (Row, Column);
 mod common_state;
 pub use common_state::CommonState;
 
+mod door_map_link;
+
 mod key_door_link;
 pub use key_door_link::KeyDoorLink;
 
